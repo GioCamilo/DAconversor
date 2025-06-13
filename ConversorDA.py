@@ -1,6 +1,7 @@
 import sys
 import json
-from PySide6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QFileDialog, QWidget, QLabel, QLineEdit, QHBoxLayout, QFrame, QListWidget, QHeaderView, QMessageBox, QProgressBar)
+from PySide6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem,
+                               QFileDialog, QWidget, QLabel, QLineEdit, QHBoxLayout, QFrame, QListWidget, QHeaderView, QMessageBox, QProgressBar)
 from PySide6.QtCore import Qt, QTimer
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment
@@ -16,8 +17,9 @@ HEADERS = [
     "Discriminação das despesas não tributável", "Pagas pela Comissária", "NF FILHA",
     "NF MÃE", "Nº DOC", "CFOP", "CÓD PARCEIRO", "PROCESSO", "CONTA CONTÁBIL",
     "VALOR LIQUIDO", "ICMS %", "VALOR BRUTO", "CLASSIFICAÇÃO", "PIS",
-    "CONFINS", "ICMS", "PEDIDO", "ITEM" , "COM EMISSÃO DE NFe"
+    "CONFINS", "ICMS", "PEDIDO", "ITEM", "COM EMISSÃO DE NFe"
 ]
+
 
 class PDFTableExtractorApp(QMainWindow):
     def __init__(self):
@@ -26,8 +28,9 @@ class PDFTableExtractorApp(QMainWindow):
         self.resize(1200, 800)
 
         # Carregar os caminhos dos arquivos do JSON
-        self.load_paths_from_json(r"Q:\Fiscal\PROGRAMAS FISCAIS\PYTHON SOLUTIONS\Conversor DA\CONFIG\config\config.json")
-        
+        self.load_paths_from_json(
+            r"Q:\Fiscal\PROGRAMAS FISCAIS\PYTHON SOLUTIONS\Conversor DA\CONFIG\config\config.json")
+
         # Widget central e layout principal
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -88,14 +91,14 @@ class PDFTableExtractorApp(QMainWindow):
         coluna3.addWidget(self.total_input)
         coluna3.addWidget(self.check_3_label)
         coluna3.addWidget(self.field_check_3)
-        
-        #coluna4
+
+        # coluna4
         coluna4.addWidget(self.total_bruto_label)
         coluna4.addWidget(self.total_bruto_input)
         coluna4.addWidget(self.total_cd_label)
         coluna4.addWidget(self.total_cd_input)
-        
-        #coluna5
+
+        # coluna5
         coluna5.addWidget(self.total_cabruto_label)
         coluna5.addWidget(self.total_cabruto_input)
         coluna5.addWidget(self.total_caliqui_label)
@@ -106,15 +109,15 @@ class PDFTableExtractorApp(QMainWindow):
         self.fields_layout.addLayout(coluna3)
         self.fields_layout.addLayout(coluna4)
         self.fields_layout.addLayout(coluna5)
-        
-        
+
         # Área superior com botões
         self.top_layout = QHBoxLayout()
         self.main_layout.addLayout(self.top_layout)
 
         # Área superior com botões
         self.top_layout = QHBoxLayout()
-        self.main_layout.addLayout(self.top_layout)  # Adiciona o top_layout no layout principal
+        # Adiciona o top_layout no layout principal
+        self.main_layout.addLayout(self.top_layout)
 
         self.select_button = QPushButton("Selecionar PDFs")
         self.select_button.clicked.connect(self.select_pdfs)
@@ -128,10 +131,11 @@ class PDFTableExtractorApp(QMainWindow):
         self.top_layout.addStretch()
 
         # Redimensionar botões
-        self.select_button.setFixedSize(120, 30)  # Define largura e altura para o botão 'Selecionar PDFs'
-        self.export_button.setFixedSize(120, 30)  # Define largura e altura para o botão 'Exportar para Excel'
+        # Define largura e altura para o botão 'Selecionar PDFs'
+        self.select_button.setFixedSize(120, 30)
+        # Define largura e altura para o botão 'Exportar para Excel'
+        self.export_button.setFixedSize(120, 30)
 
-        
         # Layout principal com lista de arquivos e tabela
         self.main_frame = QHBoxLayout()
         self.main_frame.setSpacing(20)  # Espaço entre a lista e a tabela
@@ -151,25 +155,26 @@ class PDFTableExtractorApp(QMainWindow):
 
         # Configuração dos cabeçalhos e larguras das colunas
         column_widths = [
-            250, 150, 120, 120, 100, 100, 150, 120, 150, 120, 
+            250, 150, 120, 120, 100, 100, 150, 120, 150, 120,
             80, 100, 200, 80, 80, 80, 80, 80, 200
         ]
 
         if len(HEADERS) != len(column_widths):
-            raise ValueError("O número de cabeçalhos e larguras de coluna deve ser igual.")
+            raise ValueError(
+                "O número de cabeçalhos e larguras de coluna deve ser igual.")
 
         for index, header in enumerate(HEADERS):
             self.table.setColumnWidth(index, column_widths[index])
             self.table.horizontalHeader().setSectionResizeMode(index, QHeaderView.Interactive)
 
-        # Conectar o evento de edição 
+        # Conectar o evento de edição
         self.table.cellChanged.connect(self.save_table_changes)
-        
+
         # Barra de progresso
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
         self.main_layout.addWidget(self.progress_bar)
-        
+
         # Dados internos
         self.loaded_files = {}
         self.tabelas_importadas = {}
@@ -178,7 +183,7 @@ class PDFTableExtractorApp(QMainWindow):
         self.load_timer = QTimer()
         self.load_timer.timeout.connect(self.load_table_data)
         self.lazy_load_index = 0
-        
+
     def load_paths_from_json(self, json_path):
         try:
             # Carregar o arquivo JSON
@@ -196,7 +201,8 @@ class PDFTableExtractorApp(QMainWindow):
                 if not self.banco_de_dados:
                     print("Erro: Caminho do banco de dados não encontrado no JSON.")
                 if not self.controle_path:
-                    print("Erro: Caminho da planilha de controle não encontrado no JSON.")
+                    print(
+                        "Erro: Caminho da planilha de controle não encontrado no JSON.")
 
         except FileNotFoundError:
             print(f"Erro: Arquivo JSON '{json_path}' não encontrado.")
@@ -213,9 +219,11 @@ class PDFTableExtractorApp(QMainWindow):
 
     def select_pdfs(self):
         # Abre um diálogo para selecionar arquivos PDF
-        file_paths, _ = QFileDialog.getOpenFileNames(self, "Selecionar PDFs", "", "PDF Files (*.pdf)")
+        file_paths, _ = QFileDialog.getOpenFileNames(
+            self, "Selecionar PDFs", "", "PDF Files (*.pdf)")
         if file_paths:
-            self.loaded_files = {f"PDF {i + 1}": path for i, path in enumerate(file_paths)}
+            self.loaded_files = {
+                f"PDF {i + 1}": path for i, path in enumerate(file_paths)}
 
             # Atualizar a lista de arquivos
             self.file_list.clear()
@@ -229,7 +237,8 @@ class PDFTableExtractorApp(QMainWindow):
             # Processar e criar as tabelas automaticamente após importar os PDFs
             for idx, file_path in enumerate(self.loaded_files.values(), start=1):
                 try:
-                    referencia, importador, total_nao_trib = self.extract_values_from_pdf(file_path)
+                    referencia, importador, total_nao_trib = self.extract_values_from_pdf(
+                        file_path)
 
                     # Atualizar os campos de entrada
                     self.reference_input.setText(referencia)
@@ -272,11 +281,13 @@ class PDFTableExtractorApp(QMainWindow):
                         }
 
                 except Exception as e:
-                    QMessageBox.critical(self, "Erro", f"Erro ao processar o PDF: {e}")
+                    QMessageBox.critical(
+                        self, "Erro", f"Erro ao processar o PDF: {e}")
                 finally:
                     # Atualizar a barra de progresso
                     self.progress_bar.setValue(idx)
-                print(f"Dados armazenados para {file_path}: {self.tabelas_importadas[file_path]}")
+                print(
+                    f"Dados armazenados para {file_path}: {self.tabelas_importadas[file_path]}")
 
     def on_file_select(self, item):
         """
@@ -295,12 +306,14 @@ class PDFTableExtractorApp(QMainWindow):
 
                 # Atualizar a tabela
                 tabela_dados = table_data.get("data", [])
-                self.table.blockSignals(True)  # Evita disparar eventos desnecessários
+                # Evita disparar eventos desnecessários
+                self.table.blockSignals(True)
                 self.table.clearContents()
                 self.table.setRowCount(len(tabela_dados))
                 for row_idx, row in enumerate(tabela_dados):
                     for col_idx, value in enumerate(row):
-                        self.table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+                        self.table.setItem(
+                            row_idx, col_idx, QTableWidgetItem(str(value)))
                 self.table.blockSignals(False)
 
                 # Recalcular os valores de Check
@@ -309,12 +322,10 @@ class PDFTableExtractorApp(QMainWindow):
                 self.calcular_total_bruto_cd()
                 self.calcular_total_bruto_ca()
                 self.calcular_total_liquido_ca()
-                
+
             except Exception as e:
-                QMessageBox.critical(self, "Erro", f"Erro ao processar o PDF: {e}")
-
-
-
+                QMessageBox.critical(
+                    self, "Erro", f"Erro ao processar o PDF: {e}")
 
     def on_table_data_changed(self):
         """
@@ -329,17 +340,20 @@ class PDFTableExtractorApp(QMainWindow):
         if self.lazy_load_index < len(self.current_table_data):
             row_data = self.current_table_data[self.lazy_load_index]
             for col_idx, value in enumerate(row_data):
-                self.table.setItem(self.lazy_load_index, col_idx, QTableWidgetItem(str(value)))
+                self.table.setItem(self.lazy_load_index,
+                                   col_idx, QTableWidgetItem(str(value)))
             self.lazy_load_index += 1
         else:
             self.load_timer.stop()
 
     def extract_values_from_pdf(self, file_path):
         """
-        Extrai valores gerais do PDF, como referência, importador e total não tributável.   
-        Garante que apenas o código de referência seja retornado.
+        Extrai valores gerais do PDF, como referência, importador e total não tributável,
+        percorrendo todas as páginas e juntando os resultados.
         """
-        referencia, importador, total_nao_trib = "", "", ""
+        referencias = []
+        importadores = []
+        totais_nao_trib = []
         try:
             with pdfplumber.open(file_path) as pdf:
                 for page in pdf.pages:
@@ -347,47 +361,86 @@ class PDFTableExtractorApp(QMainWindow):
                     if text:
                         lines = text.split("\n")
                         for line in lines:
-                            # Localizar e extrair apenas o código da referência
+                            # Extrair todos os códigos de referência, mesmo que haja mais de um
                             if "Referência:" in line:
-                                referencia = line.split("Referência:")[1].strip().split()[0]  # Extrai apenas o código
+                                referencias_str = line.split("Referência:")[1]
+                                if "Via Transporte:" in referencias_str:
+                                    referencias_str = referencias_str.split(
+                                        "Via Transporte:")[0]
+                                referencias_str = referencias_str.strip()
+                                # Remove espaços e separa por ; ou ,
+                                refs = [ref.strip() for ref in re.split(
+                                    r"[;,]", referencias_str) if ref.strip()]
+                                referencias.extend(refs)
                             elif "Importador/Exportador:" in line:
                                 importador = line.split(":")[1].strip()
+                                if importador and importador not in importadores:
+                                    importadores.append(importador)
                             elif "Total não Trib. (-):" in line:
                                 total_nao_trib = line.split(":")[-1].strip()
+                                if total_nao_trib and total_nao_trib not in totais_nao_trib:
+                                    totais_nao_trib.append(total_nao_trib)
+            # Junta os resultados únicos encontrados em todas as páginas
+            referencia = "; ".join(dict.fromkeys(referencias))
+            importador = "; ".join(dict.fromkeys(importadores))
+            total_nao_trib = "; ".join(dict.fromkeys(totais_nao_trib))
             return referencia, importador, total_nao_trib
         except Exception as e:
             raise ValueError(f"Erro ao processar PDF: {e}")
 
     def extract_columns_from_pdf(self, file_path):
-        """Extrai informações das colunas 'Discriminação' e 'Pagas pela Comissária'."""
+
         data = []
+        # valores como 1.234,56 ou 100,00
+        valor_regex = re.compile(r"\d{1,3}(\.\d{3})*,\d{2}$")
+        start_extraction = False
+
         try:
             with pdfplumber.open(file_path) as pdf:
-                for page in pdf.pages:
-                    text = page.extract_text()
-                    if text:
-                        lines = text.split("\n")
-                        start_index = 0
-                        for i, line in enumerate(lines):
-                            if "Discriminação das despesas não tributável" in line and "Pagas pela Comissária" in line:
-                                start_index = i + 1
+                for page_num, page in enumerate(pdf.pages):
+                    lines = page.extract_text().split("\n")
+
+                    # ✅ Página 1: detectar início após o cabeçalho da tabela
+                    if page_num == 0:
+                        for idx, line in enumerate(lines):
+                            if "Discriminação das despesas não tributável" in line:
+                                start_extraction = True
+                                start_idx = idx + 1
                                 break
-                        for line in lines[start_index:]:
-                            if not line.strip() or "total" in line.lower():
+                        else:
+                            continue  # pula se não achou
+
+                        for line in lines[start_idx:]:
+                            if "Total não Trib. (-):" in line:
                                 break
-                            parts = line.split()
-                            column_1 = " ".join(parts[:-1])
-                            column_2 = parts[-1] if parts else ""
-                            row_data = [column_1, column_2] + ["--"] * (len(HEADERS) - 2)
-                            data.append(row_data)
+                            if valor_regex.search(line.strip()):
+                                parts = line.strip().split()
+                                valor = parts[-1]
+                                descricao = " ".join(parts[:-1])
+                                data.append([descricao, valor] +
+                                            ["--"] * (len(HEADERS) - 2))
+
+                    # ✅ Demais páginas: apenas pegar até encontrar "Total não Trib." novamente
+                    else:
+                        for line in lines:
+                            if "Total não Trib. (-):" in line:
+                                break
+                            if valor_regex.search(line.strip()):
+                                parts = line.strip().split()
+                                valor = parts[-1]
+                                descricao = " ".join(parts[:-1])
+                                data.append([descricao, valor] +
+                                            ["--"] * (len(HEADERS) - 2))
+
             return data
         except Exception as e:
-            raise ValueError(f"Erro ao processar as colunas do PDF: {e}")
+            raise ValueError(f"Erro ao processar colunas do PDF: {e}")
 
     def search_in_excel(self, referencia):
         """Busca informações adicionais no Excel com base na referência."""
         if not self.controle_path:
-            QMessageBox.critical(self, "Erro", "Caminho da planilha de controle não foi carregado corretamente.")
+            QMessageBox.critical(
+                self, "Erro", "Caminho da planilha de controle não foi carregado corretamente.")
             return None
 
         try:
@@ -396,12 +449,17 @@ class PDFTableExtractorApp(QMainWindow):
             sheet = workbook.active  # Selecionar a aba ativa
 
             # Iterar pelas linhas da planilha
-            for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):  # Ignorar cabeçalho
-                print(f"Lendo linha {row_idx}: {row}")  # Diagnóstico: Mostrar os valores da linha
+            # Ignorar cabeçalho
+            for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                # Diagnóstico: Mostrar os valores da linha
+                print(f"Lendo linha {row_idx}: {row}")
 
                 # Verificar se o valor da coluna AD corresponde à referência
-                if str(row[29]).strip() == referencia.strip():  # Normalizar espaços e verificar a correspondência
-                    print(f"Referência encontrada na linha {row_idx}: {row[29]}")  # Diagnóstico: Mostrar quando encontrada
+                # Normalizar espaços e verificar a correspondência
+                if str(row[29]).strip() == referencia.strip():
+                    # Diagnóstico: Mostrar quando encontrada
+                    print(
+                        f"Referência encontrada na linha {row_idx}: {row[29]}")
                     return {
                         "coluna_g": row[6],   # Coluna G
                         "coluna_f": row[5],   # Coluna F
@@ -410,13 +468,13 @@ class PDFTableExtractorApp(QMainWindow):
                         "coluna_t": row[19],  # Coluna T
                         "coluna_u": row[20],  # Coluna U
                         "coluna_x": row[23],  # Coluna X
-                        "coluna_aa": row[26], # Coluna AA
-                        "coluna_ad": row[29], # Coluna AD
+                        "coluna_aa": row[26],  # Coluna AA
+                        "coluna_ad": row[29],  # Coluna AD
                     }
 
             # Caso a referência não seja encontrada
             print(f"Referência '{referencia}' não encontrada no Excel.")
-            return None  
+            return None
 
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao acessar o Excel: {e}")
@@ -426,11 +484,13 @@ class PDFTableExtractorApp(QMainWindow):
         """
         Atualiza a tabela com os dados do PDF, aplica cálculos específicos para PIS, CONFINS, e ICMS.
         """
-        self.table.setRowCount(len(data))  # Define o número de linhas da tabela
+        self.table.setRowCount(
+            len(data))  # Define o número de linhas da tabela
 
         for row_idx, row_data in enumerate(data):
             # Garantir que o número de colunas corresponda ao número de HEADERS
-            row_data = row_data[:len(HEADERS)] + ["--"] * (len(HEADERS) - len(row_data))
+            row_data = row_data[:len(HEADERS)] + \
+                ["--"] * (len(HEADERS) - len(row_data))
 
             # Atualizar lógica específica para colunas
             row_data[9] = row_data[1]  # Atualizar a coluna 10 (índice 9)
@@ -438,7 +498,8 @@ class PDFTableExtractorApp(QMainWindow):
             # Cálculo para PIS, CONFINS
             try:
                 # Limpar e converter o valor da Coluna 2
-                valor_liquido = row_data[1].replace(".", "").replace(",", ".").strip()
+                valor_liquido = row_data[1].replace(
+                    ".", "").replace(",", ".").strip()
                 valor_liquido = float(valor_liquido) if valor_liquido else 0.0
 
                 # Percentual de ICMS, PIS e CONFINS
@@ -448,11 +509,13 @@ class PDFTableExtractorApp(QMainWindow):
 
                 # Calcular PIS
                 valor_pis = valor_liquido * percentual_pis
-                row_data[13] = f"{valor_pis:,.2f}".replace(".", ",")  # Coluna PIS (índice 13)
+                row_data[13] = f"{valor_pis:,.2f}".replace(
+                    ".", ",")  # Coluna PIS (índice 13)
 
                 # Calcular CONFINS
                 valor_confins = valor_liquido * percentual_confins
-                row_data[14] = f"{valor_confins:,.2f}".replace(".", ",")  # Coluna CONFINS (índice 14)
+                row_data[14] = f"{valor_confins:,.2f}".replace(
+                    ".", ",")  # Coluna CONFINS (índice 14)
 
             except ValueError:
                 row_data[15] = "--"  # ICMS
@@ -463,17 +526,20 @@ class PDFTableExtractorApp(QMainWindow):
             try:
                 # Calcular Valor Bruto com a fórmula
                 valor_bruto = valor_liquido / (1 - percentual_icms)
-                valor_bruto_arredondado = round(valor_bruto, 2)  # Arredonda para 2 casas decimais
+                # Arredonda para 2 casas decimais
+                valor_bruto_arredondado = round(valor_bruto, 2)
 
                 # Formatar o valor com separador de milhar e decimal
-                valor_bruto_formatado = f"{valor_bruto_arredondado:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")  
+                valor_bruto_formatado = f"{valor_bruto_arredondado:,.2f}".replace(
+                    ",", "v").replace(".", ",").replace("v", ".")
 
                 row_data[11] = valor_bruto_formatado  # Atualiza a Coluna 12
-                
+
             # Calcular ICMS
                 valor_icms = valor_bruto * percentual_icms
-                row_data[15] = f"{valor_icms:,.2f}".replace(".", ",")  # Coluna ICMS (índice 15)
-                
+                row_data[15] = f"{valor_icms:,.2f}".replace(
+                    ".", ",")  # Coluna ICMS (índice 15)
+
             except ZeroDivisionError:
                 row_data[11] = "--"
 
@@ -485,21 +551,23 @@ class PDFTableExtractorApp(QMainWindow):
                 row_data[6] = excel_data.get("coluna_k", "--")  # Coluna 7: K
                 row_data[7] = excel_data.get("coluna_ad", "--")  # Coluna 8: AD
                 row_data[8] = excel_data.get("coluna_x", "--")  # Coluna 9: X
-                row_data[10] = excel_data.get("coluna_aa", "--")  # Coluna 10: AA
+                row_data[10] = excel_data.get(
+                    "coluna_aa", "--")  # Coluna 10: AA
                 row_data[16] = excel_data.get("coluna_t", "--")  # Coluna 17: T
                 row_data[17] = excel_data.get("coluna_u", "--")  # Coluna 18: U
                 row_data[2] = ""   # Coluna 3: B        # Coluna 3: B
 
-            
             # Atualizar lógica de outras colunas (se necessário)
-            valor_col3 = row_data[2] if len(row_data) > 2 else ""  # Garantir que a coluna 3 existe
+            # Garantir que a coluna 3 existe
+            valor_col3 = row_data[2] if len(row_data) > 2 else ""
             if isinstance(valor_col3, str) and valor_col3.strip() in ["", "--"]:
                 row_data[18] = "SEM EMISSÃO DE NFe"  # Coluna 19 (índice 18)
             else:
                 row_data[18] = "COM EMISSÃO DE NFe"  # Coluna 19 (índice 18)
 
             # Aplicar regra para CFOP (Coluna 6, índice 5)
-            descricao_coluna1 = row_data[0].strip().lower() if row_data[0] else ""
+            descricao_coluna1 = row_data[0].strip(
+            ).lower() if row_data[0] else ""
             cfop_valor = row_data[5]
 
             if "armazenagem" in descricao_coluna1 and isinstance(cfop_valor, str):
@@ -517,11 +585,8 @@ class PDFTableExtractorApp(QMainWindow):
 
             # Inserir os dados na tabela
             for col_idx, value in enumerate(row_data):
-                self.table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
-
-
-
-    
+                self.table.setItem(
+                    row_idx, col_idx, QTableWidgetItem(str(value)))
 
     def compare_and_fill_classification(self):
         """
@@ -529,7 +594,8 @@ class PDFTableExtractorApp(QMainWindow):
         """
         # Utilizar o caminho do JSON carregado
         if not self.banco_de_dados:
-            QMessageBox.critical(self, "Erro", "Caminho do banco de dados não foi carregado corretamente.")
+            QMessageBox.critical(
+                self, "Erro", "Caminho do banco de dados não foi carregado corretamente.")
             return
 
         try:
@@ -539,7 +605,8 @@ class PDFTableExtractorApp(QMainWindow):
 
             # Criar um dicionário para mapear as descrições da Coluna A com os valores da Coluna B
             despesas_map = {}
-            for row in sheet.iter_rows(min_row=2, max_col=2, values_only=True):  # Coluna A (descrição) e B (valor)
+            # Coluna A (descrição) e B (valor)
+            for row in sheet.iter_rows(min_row=2, max_col=2, values_only=True):
                 descricao = row[0]
                 valor = row[1]
 
@@ -553,28 +620,34 @@ class PDFTableExtractorApp(QMainWindow):
 
                 if descricao_tabela:
                     descricao_tabela_texto = descricao_tabela.text()
-                    descricao_tabela_normalizada = str(descricao_tabela_texto).strip().lower()
+                    descricao_tabela_normalizada = str(
+                        descricao_tabela_texto).strip().lower()
 
-                    print(f"Descrição da Tabela (linha {row_idx}): {descricao_tabela_normalizada}")
+                    print(
+                        f"Descrição da Tabela (linha {row_idx}): {descricao_tabela_normalizada}")
 
                     # Verificar se a descrição está no mapeamento do Excel
                     if descricao_tabela_normalizada in despesas_map:
                         valor = despesas_map[descricao_tabela_normalizada]
                         valor_formatado = (
-                            f"{valor:,.2f}".replace(".", ",") if isinstance(valor, (int, float)) else valor
+                            f"{valor:,.2f}".replace(".", ",") if isinstance(
+                                valor, (int, float)) else valor
                         )
-                        print(f"Atualizando valor para a linha {row_idx}, coluna CLASSIFICAÇÃO: {valor_formatado}")
-                        self.table.setItem(row_idx, 12, QTableWidgetItem(valor_formatado))  # Índice 12 -> Coluna 13
+                        print(
+                            f"Atualizando valor para a linha {row_idx}, coluna CLASSIFICAÇÃO: {valor_formatado}")
+                        self.table.setItem(row_idx, 12, QTableWidgetItem(
+                            valor_formatado))  # Índice 12 -> Coluna 13
                     else:
-                        print(f"Descrição não encontrada no mapeamento: {descricao_tabela_normalizada}")
+                        print(
+                            f"Descrição não encontrada no mapeamento: {descricao_tabela_normalizada}")
                         self.table.setItem(row_idx, 12, QTableWidgetItem("--"))
                 else:
                     print(f"Descrição vazia na linha {row_idx}")
                     self.table.setItem(row_idx, 12, QTableWidgetItem("--"))
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao acessar o arquivo Excel: {e}")
-
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao acessar o arquivo Excel: {e}")
 
     def on_file_select(self, item):
         """
@@ -598,12 +671,14 @@ class PDFTableExtractorApp(QMainWindow):
 
                     # Atualizar a tabela
                     tabela_dados = table_data.get("data", [])
-                    self.table.blockSignals(True)  # Evita disparar eventos desnecessários
+                    # Evita disparar eventos desnecessários
+                    self.table.blockSignals(True)
                     self.table.clearContents()
                     self.table.setRowCount(len(tabela_dados))
                     for row_idx, row in enumerate(tabela_dados):
                         for col_idx, value in enumerate(row):
-                            self.table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+                            self.table.setItem(
+                                row_idx, col_idx, QTableWidgetItem(str(value)))
                     self.table.blockSignals(False)
 
                     # Recalcular os valores de Check
@@ -613,11 +688,12 @@ class PDFTableExtractorApp(QMainWindow):
                     self.calcular_total_bruto_cd()
                     self.calcular_total_liquido_ca()
                 else:
-                    QMessageBox.warning(self, "Aviso", f"Dados do PDF '{item.text()}' não encontrados.")
+                    QMessageBox.warning(
+                        self, "Aviso", f"Dados do PDF '{item.text()}' não encontrados.")
 
             except Exception as e:
-                QMessageBox.critical(self, "Erro", f"Erro ao processar o PDF: {e}")
-
+                QMessageBox.critical(
+                    self, "Erro", f"Erro ao processar o PDF: {e}")
 
     def save_table_changes(self, row, column):
         """
@@ -638,7 +714,8 @@ class PDFTableExtractorApp(QMainWindow):
             file_path = self.loaded_files.get(current_item.text())
             if file_path and file_path in self.tabelas_importadas:
                 # Obter o novo valor da célula editada
-                new_value = self.table.item(row, column).text() if self.table.item(row, column) else "--"
+                new_value = self.table.item(row, column).text(
+                ) if self.table.item(row, column) else "--"
 
                 # Atualizar o valor na estrutura armazenada
                 if "data" in self.tabelas_importadas[file_path]:
@@ -647,13 +724,16 @@ class PDFTableExtractorApp(QMainWindow):
                 # Atualizar a coluna 19 (índice 18) se a coluna 3 (índice 2) foi editada
                 if column == 2:  # Índice 2 corresponde à coluna 3
                     if new_value.strip():  # Se a coluna 3 tiver algum valor
-                        self.table.blockSignals(True)  # Bloquear sinais para evitar loop
-                        self.table.setItem(row, 18, QTableWidgetItem("COM EMISSÃO DE NFe"))
+                        # Bloquear sinais para evitar loop
+                        self.table.blockSignals(True)
+                        self.table.setItem(
+                            row, 18, QTableWidgetItem("COM EMISSÃO DE NFe"))
                         self.tabelas_importadas[file_path]["data"][row][18] = "COM EMISSÃO DE NFe"
                         self.table.blockSignals(False)
                     else:  # Se o valor estiver vazio
                         self.table.blockSignals(True)
-                        self.table.setItem(row, 18, QTableWidgetItem("SEM EMISSÃO DE NFe"))
+                        self.table.setItem(
+                            row, 18, QTableWidgetItem("SEM EMISSÃO DE NFe"))
                         self.tabelas_importadas[file_path]["data"][row][18] = "SEM EMISSÃO DE NFe"
                         self.table.blockSignals(False)
                         self.calcular_total_bruto()
@@ -665,9 +745,10 @@ class PDFTableExtractorApp(QMainWindow):
             total_nao_trib = self.total_input.text().strip()
             if not total_nao_trib:
                 raise ValueError("O campo 'Total não Trib. (-)' está vazio.")
-            
+
             # Limpar o formato numérico
-            total_nao_trib = float(total_nao_trib.replace(".", "").replace(",", "."))
+            total_nao_trib = float(
+                total_nao_trib.replace(".", "").replace(",", "."))
 
             # Inicializar valores para cálculo
             total_valor_liquido = 0.0
@@ -675,15 +756,19 @@ class PDFTableExtractorApp(QMainWindow):
 
             # Iterar pelas linhas da tabela
             for row_idx in range(self.table.rowCount()):
-                descricao = self.table.item(row_idx, 0).text()  # Coluna "Discriminação das despesas não tributável"
-                valor_liquido_item = self.table.item(row_idx, 9)  # Coluna "Valor Líquido"
+                # Coluna "Discriminação das despesas não tributável"
+                descricao = self.table.item(row_idx, 0).text()
+                valor_liquido_item = self.table.item(
+                    row_idx, 9)  # Coluna "Valor Líquido"
 
                 # Verificar se o item tem um valor válido
                 if valor_liquido_item and valor_liquido_item.text() not in ["--", "", None]:
                     try:
-                        valor_liquido = float(valor_liquido_item.text().replace(".", "").replace(",", "."))
+                        valor_liquido = float(
+                            valor_liquido_item.text().replace(".", "").replace(",", "."))
                     except ValueError:
-                        raise ValueError(f"Valor inválido encontrado na coluna 'Valor Líquido': {valor_liquido_item.text()}")
+                        raise ValueError(
+                            f"Valor inválido encontrado na coluna 'Valor Líquido': {valor_liquido_item.text()}")
 
                     # Verificar se é FRETE INTERNACIONAL
                     if descricao and descricao.strip().upper() == "FRETE INTERNACIONAL":
@@ -702,46 +787,55 @@ class PDFTableExtractorApp(QMainWindow):
             self.field_check_3.setText(f"{campo3:,.2f}".replace(".", ","))
 
         except ValueError as e:
-            QMessageBox.critical(self, "Erro", f"Certifique-se de que os valores estão corretos.\n\n{e}")
+            QMessageBox.critical(
+                self, "Erro", f"Certifique-se de que os valores estão corretos.\n\n{e}")
 
     def calcular_total_bruto(self):
         try:
             total_bruto = 0.0
             for row_idx in range(self.table.rowCount()):
-                valor_bruto_item = self.table.item(row_idx, 11)  # Coluna "VALOR BRUTO" (índice 11)
+                # Coluna "VALOR BRUTO" (índice 11)
+                valor_bruto_item = self.table.item(row_idx, 11)
                 if valor_bruto_item:
                     valor_bruto_str = valor_bruto_item.text()
                     if valor_bruto_str not in ["", "--"]:
                         # Corrigindo a conversão para float
-                        valor_bruto_str = valor_bruto_str.replace(".", "").replace(",", ".")
+                        valor_bruto_str = valor_bruto_str.replace(
+                            ".", "").replace(",", ".")
                         total_bruto += float(valor_bruto_str)
 
             # Arredonda o total_bruto para 2 casas decimais
-            total_bruto = round(total_bruto, 2)  
+            total_bruto = round(total_bruto, 2)
 
             # Exibe o total_bruto no campo total_bruto_input
-            self.total_bruto_input.setText(f"{total_bruto:,.2f}".replace(".", ","))
+            self.total_bruto_input.setText(
+                f"{total_bruto:,.2f}".replace(".", ","))
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao calcular o total bruto: {e}")
-            
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao calcular o total bruto: {e}")
+
     def calcular_total_bruto_cd(self):
         try:
             total_bruto_cd = 0.0
             for row_idx in range(self.table.rowCount()):
                 cfop_item = self.table.item(row_idx, 5)  # Coluna 6 (CFOP)
                 if cfop_item and "CD" in cfop_item.text():
-                    valor_bruto_item = self.table.item(row_idx, 11)  # Coluna 12 (VALOR BRUTO)
+                    valor_bruto_item = self.table.item(
+                        row_idx, 11)  # Coluna 12 (VALOR BRUTO)
                     if valor_bruto_item:
                         valor_bruto_str = valor_bruto_item.text()
                         if valor_bruto_str not in ["", "--"]:
-                            valor_bruto_str = valor_bruto_str.replace(".", "").replace(",", ".")
+                            valor_bruto_str = valor_bruto_str.replace(
+                                ".", "").replace(",", ".")
                             total_bruto_cd += float(valor_bruto_str)
 
-            self.total_cd_input.setText(f"{total_bruto_cd:,.2f}".replace(".", ","))
+            self.total_cd_input.setText(
+                f"{total_bruto_cd:,.2f}".replace(".", ","))
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao calcular o total bruto CD: {e}")
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao calcular o total bruto CD: {e}")
 
     def calcular_total_bruto_ca(self):
         try:
@@ -749,17 +843,21 @@ class PDFTableExtractorApp(QMainWindow):
             for row_idx in range(self.table.rowCount()):
                 cfop_item = self.table.item(row_idx, 5)  # Coluna 6 (CFOP)
                 if cfop_item and "CA" in cfop_item.text():
-                    valor_bruto_item = self.table.item(row_idx, 11)  # Coluna 12 (VALOR BRUTO)
+                    valor_bruto_item = self.table.item(
+                        row_idx, 11)  # Coluna 12 (VALOR BRUTO)
                     if valor_bruto_item:
                         valor_bruto_str = valor_bruto_item.text()
                         if valor_bruto_str not in ["", "--"]:
-                            valor_bruto_str = valor_bruto_str.replace(".", "").replace(",", ".")
+                            valor_bruto_str = valor_bruto_str.replace(
+                                ".", "").replace(",", ".")
                             total_bruto_ca += float(valor_bruto_str)
 
-            self.total_cabruto_input.setText(f"{total_bruto_ca:,.2f}".replace(".", ","))
+            self.total_cabruto_input.setText(
+                f"{total_bruto_ca:,.2f}".replace(".", ","))
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao calcular o total bruto CA: {e}")
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao calcular o total bruto CA: {e}")
 
     def calcular_total_liquido_ca(self):
         try:
@@ -767,21 +865,26 @@ class PDFTableExtractorApp(QMainWindow):
             for row_idx in range(self.table.rowCount()):
                 cfop_item = self.table.item(row_idx, 5)  # Coluna 6 (CFOP)
                 if cfop_item and "CA" in cfop_item.text():
-                    valor_liquido_item = self.table.item(row_idx, 9)  # Coluna 10 (VALOR LIQUIDO)
+                    valor_liquido_item = self.table.item(
+                        row_idx, 9)  # Coluna 10 (VALOR LIQUIDO)
                     if valor_liquido_item:
                         valor_liquido_str = valor_liquido_item.text()
                         if valor_liquido_str not in ["", "--"]:
-                            valor_liquido_str = valor_liquido_str.replace(".", "").replace(",", ".")
+                            valor_liquido_str = valor_liquido_str.replace(
+                                ".", "").replace(",", ".")
                             total_liquido_ca += float(valor_liquido_str)
 
-            self.total_caliqui_input.setText(f"{total_liquido_ca:,.2f}".replace(".", ","))
+            self.total_caliqui_input.setText(
+                f"{total_liquido_ca:,.2f}".replace(".", ","))
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao calcular o total líquido CA: {e}")
-    
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao calcular o total líquido CA: {e}")
+
     def update_control_excel(self):
         if not self.controle_path:
-            QMessageBox.critical(self, "Erro", "Caminho da planilha de controle não foi carregado corretamente.")
+            QMessageBox.critical(
+                self, "Erro", "Caminho da planilha de controle não foi carregado corretamente.")
             return
 
         try:
@@ -793,17 +896,21 @@ class PDFTableExtractorApp(QMainWindow):
             referencia = self.reference_input.text()
 
             # Encontrar a linha correspondente na planilha de controle
-            for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):  # Começar da linha 2
-                if row[29] == referencia:  # Comparar com a coluna AD (índice 29)
+            # Começar da linha 2
+            for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                # Comparar com a coluna AD (índice 29)
+                if row[29] == referencia:
                     # Iterar sobre as linhas da tabela
                     for table_row_idx in range(self.table.rowCount()):
                         # Obter o valor da coluna 3 (NF FILHA)
-                        nf_filha_item = self.table.item(table_row_idx, 2)  # Coluna 3 (índice 2)
+                        nf_filha_item = self.table.item(
+                            table_row_idx, 2)  # Coluna 3 (índice 2)
                         if nf_filha_item:
                             nf_filha_valor = nf_filha_item.text()
 
                             # Atualizar a coluna AE (índice 30) com o valor da NF FILHA
-                            sheet.cell(row=row_idx, column=31).value = nf_filha_valor
+                            sheet.cell(
+                                row=row_idx, column=31).value = nf_filha_valor
                             break  # Sair do loop interno após encontrar a linha
                     break  # Sair do loop externo após atualizar a planilha de controle
 
@@ -811,9 +918,8 @@ class PDFTableExtractorApp(QMainWindow):
             wb.save(self.controle_path)
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao atualizar a planilha de controle: {e}")
-                
-
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao atualizar a planilha de controle: {e}")
 
     def export_to_excel(self):
         """
@@ -825,7 +931,8 @@ class PDFTableExtractorApp(QMainWindow):
             return
 
         # Abrir diálogo para selecionar o local de salvamento
-        file_path, _ = QFileDialog.getSaveFileName(self, "Salvar como Excel", "", "Excel Files (*.xlsx)")
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Salvar como Excel", "", "Excel Files (*.xlsx)")
         if not file_path:
             return
 
@@ -833,37 +940,45 @@ class PDFTableExtractorApp(QMainWindow):
             with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
                 for idx, (table_name, table_data) in enumerate(self.tabelas_importadas.items(), start=1):
                     if not isinstance(table_data, dict) or "data" not in table_data:
-                        QMessageBox.warning(self, "Aviso", f"Dados inválidos para {table_name}. Ignorando...")
+                        QMessageBox.warning(
+                            self, "Aviso", f"Dados inválidos para {table_name}. Ignorando...")
                         continue
 
                     # Extrair os dados
                     referencia = table_data.get("referencia", "Não Informado")
                     importador = table_data.get("importador", "Não Informado")
-                    total_nao_trib = table_data.get("total_nao_trib", "Não Informado")
+                    total_nao_trib = table_data.get(
+                        "total_nao_trib", "Não Informado")
                     tabela_dados = table_data.get("data", [])
 
                     # Criar DataFrame com os dados
                     df = pd.DataFrame(tabela_dados, columns=HEADERS)
 
                     # Identificar colunas numéricas e convertê-las para números
-                    numeric_columns = ["Total Não Trib.", "Total Bruto", "Total Bruto CD", "Total Bruto CA", "Total Líquido CA"]
+                    numeric_columns = ["Total Não Trib.", "Total Bruto",
+                                       "Total Bruto CD", "Total Bruto CA", "Total Líquido CA"]
                     for col in numeric_columns:
                         if col in df.columns:
-                            df[col] = df[col].replace(",", ".", regex=True)  # Substituir vírgula por ponto
-                            df[col] = pd.to_numeric(df[col], errors='coerce')  # Converter para float
+                            # Substituir vírgula por ponto
+                            df[col] = df[col].replace(",", ".", regex=True)
+                            # Converter para float
+                            df[col] = pd.to_numeric(df[col], errors='coerce')
 
                     # Exportar para o Excel
                     sheet_name = f"PDF {idx}"
-                    df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=4)
+                    df.to_excel(writer, sheet_name=sheet_name,
+                                index=False, startrow=4)
 
                     # Obter a planilha
                     workbook = writer.book
                     worksheet = writer.sheets[sheet_name]
 
                     # Cores e estilos para cabeçalhos
-                    header_fill = PatternFill(start_color="007bff", end_color="007bff", fill_type="solid")
+                    header_fill = PatternFill(
+                        start_color="007bff", end_color="007bff", fill_type="solid")
                     header_font = Font(color="ffffff", bold=True)
-                    alignment = Alignment(horizontal="center", vertical="center")
+                    alignment = Alignment(
+                        horizontal="center", vertical="center")
 
                     # Aplicar estilo no cabeçalho (linha 5)
                     for cell in worksheet[5]:
@@ -889,21 +1004,24 @@ class PDFTableExtractorApp(QMainWindow):
                         worksheet[cell].alignment = alignment
 
                     # Formatar as colunas B, J e L como numéricas
-                    for row in worksheet.iter_rows(min_row=5):  # Começa na linha 5
+                    # Começa na linha 5
+                    for row in worksheet.iter_rows(min_row=5):
                         for cell in row:
-                            if cell.column_letter in ['B', 'J', 'L', 'N', 'O', 'P']:  # Verifica se a célula está nas colunas B, J ou L
+                            # Verifica se a célula está nas colunas B, J ou L
+                            if cell.column_letter in ['B', 'J', 'L', 'N', 'O', 'P']:
                                 try:
                                     # Tentar converter o valor da célula para numérico
-                                    valor = float(str(cell.value).replace('.', '').replace(',', '.'))
+                                    valor = float(str(cell.value).replace(
+                                        '.', '').replace(',', '.'))
                                     cell.value = valor
                                     cell.number_format = '#,##0.00'  # Formato numérico com duas casas decimais
                                 except ValueError:
                                     pass  # Ignorar células que não podem ser convertidas
 
-
                     # Ajustar largura das colunas
                     for column_cells in worksheet.columns:
-                        max_length = max((len(str(cell.value)) for cell in column_cells if cell.value), default=0)
+                        max_length = max(
+                            (len(str(cell.value)) for cell in column_cells if cell.value), default=0)
                         col_letter = column_cells[0].column_letter
                         worksheet.column_dimensions[col_letter].width = max_length + 2
 
@@ -919,20 +1037,18 @@ class PDFTableExtractorApp(QMainWindow):
             if reply == QMessageBox.Yes:
                 try:
                     self.update_control()
-                    QMessageBox.information(self, "Sucesso", "Planilha de controle atualizada com sucesso!")
+                    QMessageBox.information(
+                        self, "Sucesso", "Planilha de controle atualizada com sucesso!")
                 except Exception as e:
-                    QMessageBox.critical(self, "Erro", f"Erro ao atualizar a planilha de controle: {e}")
+                    QMessageBox.critical(
+                        self, "Erro", f"Erro ao atualizar a planilha de controle: {e}")
 
-            QMessageBox.information(self, "Sucesso", f"Dados exportados para {file_path}")
+            QMessageBox.information(
+                self, "Sucesso", f"Dados exportados para {file_path}")
 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao exportar os dados: {e}")
-
-
-
-
-
-
+            QMessageBox.critical(
+                self, "Erro", f"Erro ao exportar os dados: {e}")
 
 
 if __name__ == "__main__":
